@@ -1,0 +1,8 @@
+{
+  "name": "cranktheory-site",
+  "version": "1.0.0",
+  "description": "Crank Theory - 3D Printed Hot Wheels Accessories",
+  "dependencies": {
+    "nodemailer": "^6.9.9"
+  }
+}
