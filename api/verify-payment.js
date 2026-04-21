@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 
-export default function handler(req, res) {
+module.exports = function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
@@ -26,4 +26,4 @@ export default function handler(req, res) {
   }
 
   return res.status(200).json({ success: true, payment_id: razorpay_payment_id });
-}
+};

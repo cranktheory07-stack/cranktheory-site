@@ -1,6 +1,6 @@
 const https = require("https");
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
@@ -28,33 +28,30 @@ export default async function handler(req, res) {
   const auth = Buffer.from(`${KEY_ID}:${KEY_SECRET}`).toString("base64");
 
   return new Promise((resolve) => {
-    const request = https.request(
-      {
-        hostname: "api.razorpay.com",
-        path:     "/v1/orders",
-        method:   "POST",
-        headers: {
-          "Content-Type":   "application/json",
-          "Authorization":  `Basic ${auth}`,
-          "Content-Length": Buffer.byteLength(orderData),
-        },
+    const request = https.request({
+      hostname: "api.razorpay.com",
+      path:     "/v1/orders",
+      method:   "POST",
+      headers: {
+        "Content-Type":   "application/json",
+        "Authorization":  `Basic ${auth}`,
+        "Content-Length": Buffer.byteLength(orderData),
       },
-      (response) => {
-        let data = "";
-        response.on("data", (chunk) => (data += chunk));
-        response.on("end", () => {
-          if (response.statusCode === 200) {
-            const order = JSON.parse(data);
-            res.status(200).json({ order_id: order.id, amount: order.amount, currency: order.currency });
-          } else {
-            res.status(500).json({ error: "Razorpay order creation failed", details: data });
-          }
-          resolve();
-        });
-      }
-    );
+    }, (response) => {
+      let data = "";
+      response.on("data", (chunk) => (data += chunk));
+      response.on("end", () => {
+        if (response.statusCode === 200) {
+          const order = JSON.parse(data);
+          res.status(200).json({ order_id: order.id, amount: order.amount, currency: order.currency });
+        } else {
+          res.status(500).json({ error: "Razorpay order creation failed", details: data });
+        }
+        resolve();
+      });
+    });
     request.on("error", (e) => { res.status(500).json({ error: e.message }); resolve(); });
     request.write(orderData);
     request.end();
   });
-}
+};
