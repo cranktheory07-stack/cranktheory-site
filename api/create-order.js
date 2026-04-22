@@ -43,7 +43,7 @@ module.exports = async function handler(req, res) {
       response.on("end", () => {
         if (response.statusCode === 200) {
           const order = JSON.parse(data);
-          res.status(200).json({ order_id: order.id, amount: order.amount, currency: order.currency });
+          res.status(200).json({ order_id: order.id, amount: order.amount, currency: order.currency, key_id: KEY_ID });
         } else {
           res.status(500).json({ error: "Razorpay order creation failed", details: data });
         }
